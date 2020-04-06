@@ -96,10 +96,10 @@
       };
 
       //YOUR TURN: add your Mapbox access token 
-      mapboxgl.accessToken = '<Replace with your access token>';
+      mapboxgl.accessToken = 'pk.eyJ1IjoibWFrd2FuYWQiLCJhIjoiY2oxZmhlaGkzMDAwdzJ4cnZwZm16ZHoxZSJ9.nNg1c5tLbsq9f-IGMCh7-w';
       var map = new mapboxgl.Map({
         container: 'map', // container id
-        style: "<Replace with a Mapbox style url>", //YOUR TURN: choose a style: https://docs.mapbox.com/api/maps/#styles
+        style: "mapbox://styles/mapbox/streets-v11", //YOUR TURN: choose a style: https://docs.mapbox.com/api/maps/#styles
         center: [-122.411464, 37.7852299], // starting position [lng, lat]
         zoom: 9, // starting zoom
         transformRequest: transformRequest
