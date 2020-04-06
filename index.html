@@ -29,7 +29,7 @@
       bottom: 0;
     }
 
-
+	
     .mapboxgl-popup {
       padding-bottom: 5px;
     }
@@ -132,13 +132,13 @@
 
           // create a variable for your popup and populate your popup with information from your table
           var popup = new mapboxgl.Popup()
-            .setHTML(`<h3>` + row.Practice_Code + '</br>' + row.Practice_Name+`</h3>` + '<h4>' + '<b>' + 'Neighbourhood' + '</b>' + '</br>'+ row.Neighbourhood + '</h4>' + '<h4>' + '<b>' + 'PCN' + '</b>' + '</br>' + row.PCN + '</h4>'); 
+            .setHTML(`<h3>` + row.Org_Code + '</br>' + row.Org_Name+`</h3>` + '<h4>' + '<b>' + 'Neighbourhood' + '</b>' + '</br>'+ row.Neighbourhood + '</h4>' + '<h4>' + '<b>' + 'PCN' + '</b>' + '</br>' + row.PCN + '</h4>'); 
 			// use the table to populate your popup with text
 
 
           // create a variable for your markup and add it to the map 
           var marker = new mapboxgl.Marker({
-              color: 'purple'
+              color: '#0072CE'
             })
             .setLngLat([row.Longitude, row.Latitude])
             .setPopup(popup)
