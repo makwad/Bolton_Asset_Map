@@ -114,7 +114,8 @@
       function init() {
         Tabletop.init({
           // YOUR TURN: change 'key' value to point to your spreadsheet
-          key: 'https://docs.google.com/spreadsheets/d/1MiqwGe_7m6B0xFQfaS3GGRO8CmGm5xlXPICDPEeGHyo/edit?usp=sharing',
+          //key: 'https://docs.google.com/spreadsheets/d/1MiqwGe_7m6B0xFQfaS3GGRO8CmGm5xlXPICDPEeGHyo/edit?usp=sharing',
+		  key: 'https://docs.google.com/spreadsheets/d/1rj8WuJnlXyGWbtUhQyFWb7tRiM5i8SXq8k974oTR-yo/edit?usp=sharing',
           // once Tabletop has loaded the data, it passes it to the 'callback' function, 'addPoints', defined below
           callback: addPoints,
           simpleSheet: true
@@ -131,7 +132,8 @@
 
           // create a variable for your popup and populate your popup with information from your table
           var popup = new mapboxgl.Popup()
-            .setHTML(`<h3>` + row.Name + `</h3>` + '<h4>' + '<b>' + 'Address: ' + '</b>' + row.Address + '</h4>' + '<h4>' + '<b>' + 'Phone: ' + '</b>' + row.Phone + '</h4>'); // use the table to populate your popup with text
+            .setHTML(`<h3>` + row.Practice_Code + '</br>' + row.Practice_Name+`</h3>` + '<h4>' + '<b>' + 'Neighbourhood' + '</b>' + '</br>'+ row.Neighbourhood + '</h4>' + '<h4>' + '<b>' + 'PCN' + '</b>' + '</br>' + row.PCN + '</h4>'); 
+			// use the table to populate your popup with text
 
 
           // create a variable for your markup and add it to the map 
