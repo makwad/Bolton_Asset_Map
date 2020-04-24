@@ -79,27 +79,26 @@
         "pk.eyJ1IjoiYWFnb3N0aW5pLXBlb3JpYWdvdiIsImEiOiJjanRnMzdjYnkwcDAxM3ltcDNjaXkyNWgzIn0.NhV8nl5x6256q8F_-gVCtQ";
       var map = new mapboxgl.Map({
         container: "map",
-        style: "mapbox://styles/mapbox/streets-v11",
+        //style: "mapbox://styles/mapbox/streets-v11",
+		style: "mapbox://styles/mapbox/light-v10",
         zoom: 11,
         center: [-2.4346591, 53.574992],
       });
 
       map.on("load", function () {
+	  
         map.addSource("practices", {
           type: "vector",
           url: "mapbox://makwanad.cjer6o95v0aik2rob3svwlgy9-53nie",
         });
         map.addLayer({
           id: "GP Practices",
-          type: "circle",
+          type: "symbol",
           source: "practices",
           layout: {
-            visibility: "visible",
-          },
-          paint: {
-            "circle-radius": 5,
-            "circle-color": "#0072CE",
-          },
+           'icon-image': 'doctor-15',
+           'icon-size': 1
+		  },
           "source-layer": "Bolton_Practices",
         });
 
@@ -109,15 +108,13 @@
         });
         map.addLayer({
           id: "Carehomes",
-          type: "circle",
+          type: "symbol",
           source: "carehomes",
           layout: {
-            visibility: "visible",
-          },
-          paint: {
-            "circle-radius": 5,
-            "circle-color": "#ce0072",
-          },
+           'icon-image': 'lodging-15',
+		   //'icon-color': "#ce0072", don't work
+           'icon-size': 1
+		  },
           "source-layer": "Bolton_Carehomes",
         });
 
@@ -148,7 +145,7 @@
           url: "mapbox://makwanad.cj8ej3a7p0sxc33p2bn587b1b-2f5cf",
         });
         map.addLayer({
-          id: "Bolton",
+          id: "Bolton fill",
           type: "fill",
           source: "Bolton",
           "source-layer": "Bolton_Outline",
@@ -177,7 +174,7 @@ map.on('mouseleave', 'GP Practices', function() {
 map.getCanvas().style.cursor = '';
 });
 
-      var toggleableLayerIds = ["Bolton", "Carehomes", "GP Practices"];
+      var toggleableLayerIds = ["Bolton", "Bolton fill", "Carehomes", "GP Practices"];
 
       for (var i = 0; i < toggleableLayerIds.length; i++) {
         var id = toggleableLayerIds[i];
