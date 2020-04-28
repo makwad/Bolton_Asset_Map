@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<!-- https://docs.mapbox.com/help/tutorials/local-search-geocoding-api/#add-the-bbox-and-proximity-parameters -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>Bolton Locality Asset Map</title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+	<script src='https://api.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js'></script>
+	<link href='https://api.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css' rel='stylesheet' />
+	<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.2.0/mapbox-gl-geocoder.min.js'></script>
+	<link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.2.0/mapbox-gl-geocoder.css' type='text/css' />
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+
+  <div id='map'></div>
+  
+    <script>
+ 
+      mapboxgl.accessToken = 'pk.eyJ1IjoiYWFnb3N0aW5pLXBlb3JpYWdvdiIsImEiOiJjanRnMzdjYnkwcDAxM3ltcDNjaXkyNWgzIn0.NhV8nl5x6256q8F_-gVCtQ';
+      var map = new mapboxgl.Map({
+        container: 'map', // Container ID
+        style: "mapbox://styles/mapbox/streets-v11",
+		//style: "mapbox://styles/mapbox/light-v10",
+        center: [-2.4346591, 53.574992], // Starting position [lng, lat]
+        zoom: 12 // Starting zoom level
+      });
+
+    var size = 200;
+
+    // implementation of CustomLayerInterface to draw a pulsing dot icon on the map
+    // see https://docs.mapbox.com/mapbox-gl-js/api/#customlayerinterface for more info
+    var pulsingDot = {
+        width: size,
+        height: size,
+        data: new Uint8Array(size * size * 4),
+
+        // get rendering context for the map canvas when layer is added to the map
+        onAdd: function() {
+            var canvas = document.createElement('canvas');
+            canvas.width = this.width;
+            canvas.height = this.height;
+            this.context = canvas.getContext('2d');
+        },
+
+        // called once before every frame where the icon will be used
+        render: function() {
+            var duration = 1000;
+            var t = (performance.now() % duration) / duration;
+
+            var radius = (size / 2) * 0.3;
+            var outerRadius = (size / 2) * 0.7 * t + radius;
+            var context = this.context;
+
+            // draw outer circle
+            context.clearRect(0, 0, this.width, this.height);
+            context.beginPath();
+            context.arc(
+                this.width / 2,
+                this.height / 2,
+                outerRadius,
+                0,
+                Math.PI * 2
+            );
+            context.fillStyle = 'rgba(255, 50, 102,' + (1 - t) + ')';
+            context.fill();
+
+            // draw inner circle
+            context.beginPath();
+            context.arc(
+                this.width / 2,
+                this.height / 2,
+                radius,
+                0,
+                Math.PI * 2
+            );
+            context.fillStyle = '#ff0040';
+            context.strokeStyle = 'white';
+            context.lineWidth = 2 + 4 * (1 - t);
+            context.fill();
+            context.stroke();
+
+            // update this image's data with data from the canvas
+            this.data = context.getImageData(
+                0,
+                0,
+                this.width,
+                this.height
+            ).data;
+
+            // continuously repaint the map, resulting in the smooth animation of the dot
+            map.triggerRepaint();
+
+            // return `true` to let the map know that the image was updated
+            return true;
+        }
+    };
+
+    map.on('load', function() {
+        map.addImage('pulsing-dot', pulsingDot, { pixelRatio: 2 });
+
+        map.addSource('points', {
+            'type': 'geojson',
+            'data': {
+                'type': 'FeatureCollection',
+                'features': [
+                    {
+                        'type': 'Feature',
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [0, 0]
+                        }
+                    }
+                ]
+            }
+        });
+
+    });
+var geocoder = new MapboxGeocoder({
+        // Initialize the geocoder
+        accessToken: mapboxgl.accessToken, // Set the access token
+        mapboxgl: mapboxgl, // Set the mapbox-gl instance
+        marker: false, // Do not use the default marker style
+        placeholder: 'Search in Bolton', // Placeholder text for the search bar
+       	bbox: [ -2.53940, 53.53064, -2.36407, 53.63192], // Boundary for Bolton SouthWestern->NorthEast 
+        proximity: {
+		  /*longitude: -122.25948,
+          latitude: 37.87221*/
+          longitude: -2.4346591,
+          latitude: 53.574992
+        } // Coordinates of UC Berkeley
+      });
+
+      // Add the geocoder to the map
+      map.addControl(geocoder);
+
+      // After the map style has loaded on the page,
+      // add a source layer and default styling for a single point
+      map.on('load', function() {
+        map.addSource('single-point', {
+          'type': 'geojson',
+          'data': {
+            'type': 'FeatureCollection',
+            'features': []
+          }
+        });
+
+        map.addLayer({
+          'id': 'point',
+          'source': 'single-point',
+          /*'type': 'circle',
+          'paint': {
+            'circle-radius': 10,
+			'circle-opacity':0.5,
+			'circle-color': '#ffd700',
+            'circle-stroke-color': '#000000'
+          }*/
+		  type: "symbol",
+          layout: {
+           'icon-image': 'pulsing-dot',
+           'icon-size': 1
+		  }
+        });
+
+        // Listen for the `result` event from the Geocoder // `result` event is triggered when a user makes a selection
+        //  Add a marker at the result's coordinates
+        geocoder.on('result', function(e) {
+          map.getSource('single-point').setData(e.result.geometry);
+        });
+      });
+    </script>
+  
+
+</body></html>
